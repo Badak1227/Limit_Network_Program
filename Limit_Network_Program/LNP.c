@@ -14,7 +14,6 @@
 #define ESC 27
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <conio.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -245,7 +244,7 @@ int udp_server() {
 			GetSystemTime(&received_time);
 
 			printf(" sent time : %s\n", received_msg);
-			printf(" receive time: %02d:%02d:%02d.%03d from %s\n", received_time.wHour, received_time.wMinute, received_time.wSecond, received_time.wMilliseconds, inet_ntoa(client_addr.sin_addr));
+			printf(" receive time: %02d:%02d:%02d.%03d from %s\n\n", received_time.wHour, received_time.wMinute, received_time.wSecond, received_time.wMilliseconds, inet_ntoa(client_addr.sin_addr));
 			fprintf(received_csv, "%s,%02d:%02d:%02d.%03d\n", received_msg, received_time.wHour, received_time.wMinute, received_time.wSecond, received_time.wMilliseconds);
 
 			closesocket(client);
@@ -410,7 +409,7 @@ int limit_udp_send(SOCKET sock, struct sockaddr* to, int tolen, int max_rate) {
 	SYSTEMTIME time;
 	ULONGLONG prev_tick = GetTickCount64();
 	ULONGLONG current_tick = 0;
-	FILE* sent_csv;
+	FILE* sent_csv = NULL;
 
 	int sent_bytes = 0, sent;
 
@@ -481,9 +480,9 @@ int udp_client() {
 	printf("success.\n");
 
 	//서버 ip와 port 번호 입력
-	printf("Enter server ip : ");
+	printf(" Enter server ip : ");
 	scanf("%s", server_ip);
-	printf("Enter server port : ");
+	printf(" Enter server port : ");
 	scanf("%d", &server_port);
 	while (getchar() != '\n');
 
@@ -493,11 +492,11 @@ int udp_client() {
 
 	server_addr_size = sizeof(server_addr);
 
-	printf(" Select transmission rate - 500byte/s | 1     1000byte/s | 2     2000byte/s | 3\n");
+	printf(" Select transmission rate - 500byte/s | 1     1000byte/s | 2     2000byte/s | 3     100000byte/s | 4\n");
 	do {
 		transmission_rate = _getch();
 
-		if ('1' <= transmission_rate && transmission_rate <= '3') {
+		if ('1' <= transmission_rate && transmission_rate <= '4') {
 			printf("\r                     \r %c\n", transmission_rate);
 			break;
 		}
@@ -531,6 +530,14 @@ int udp_client() {
 	}
 	else if (transmission_rate == '3') {
 		if (limit_udp_send(client, (struct sockaddr*)&server_addr, server_addr_size, 2000) == -1) {
+			closesocket(client);
+			WSACleanup();
+			system("cls");
+			return 0;
+		}
+	}
+	else {
+		if (limit_udp_send(client, (struct sockaddr*)&server_addr, server_addr_size, 100000) == -1) {
 			closesocket(client);
 			WSACleanup();
 			system("cls");
