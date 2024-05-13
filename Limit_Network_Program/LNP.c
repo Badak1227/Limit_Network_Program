@@ -270,6 +270,8 @@ int limit_tcp_send(SOCKET sock, int max_rate) {
 	int sent_bytes = 0, sent;
 
 	sent_csv = fopen("sent.csv", "w");//패킷 손실율을 측정하기 위해 패킷들의 송신시간을 기록
+	fprintf(sent_csv, "송신 시간\n");
+
 	do {
 		//esc를 누를 경우 반복 송신 상태에서 벗어남 (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
 		if (_kbhit() && _getch() == ESC) break;
@@ -416,6 +418,7 @@ int limit_udp_send(SOCKET sock, struct sockaddr* to, int tolen, int max_rate) {
 	int sent_bytes = 0, sent;
 
 	sent_csv = fopen("sent.csv", "w");//패킷 손실율을 측정하기 위해 패킷들의 송신시간을 기록
+	fprintf(sent_csv, "송신 시간\n");
 
 	do {
 		//esc를 누를 경우 반복 송신 상태에서 벗어남 (GetAsyncKeyState(VK_ESCAPE) & 0x8000)
