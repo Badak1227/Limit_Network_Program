@@ -62,7 +62,7 @@ int tcp_server() {
 	FILE* received_csv = NULL;
 
 	int client_addr_size, len = 0, port = 2000;
-	char type = 0, received_msg[100] = { 0 };
+	char type = 0, convert[3] = { 0 }, received_msg[100] = { 0 };
 
 	if (WSAStartup(MAKEWORD(2, 2), &wsa_init)) {
 		printf(" WSA init failed\n");
@@ -121,6 +121,7 @@ int tcp_server() {
 	printf(" Back | esc\n\n");
 
 	received_csv = fopen("received.csv", "w");//csv파일로 수신받은 패킷의 송신 시간과 수신시간을 기록
+	fprintf(received_csv, "송신 시간,수신 시간\n");
 	client_addr_size = sizeof(client_addr);
 
 	while (1) {
