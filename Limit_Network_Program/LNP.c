@@ -230,6 +230,7 @@ int udp_server() {
 	printf(" Back | esc\n\n");
 
 	received_csv = fopen("received.csv", "w");//csv파일로 수신받은 패킷의 송신 시간과 수신시간을 기록
+	fprintf(received_csv, "송신 시간,수신 시간\n");
 	client_addr_size = sizeof(client_addr);
 
 	while (1) {
